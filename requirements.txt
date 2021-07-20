@@ -1,2 +1,3 @@
 requirements
 html2text
+prettyconf
