@@ -4,6 +4,7 @@ from typing import DefaultDict
 
 import html2text
 import requests
+import telegram
 
 import config
 
@@ -43,3 +44,12 @@ def get_schedule(channel: str, date: datetime.date = datetime.date.today()):
             schedule[heading].append(line)
 
     return schedule
+
+
+def send_guide(guide: dict):
+    bot = telegram.Bot(token=config.TELEGRAM_BOT_TOKEN)
+    bot.send_message(
+        chat_id=config.TELEGRAM_CHANNEL_ID,
+        text='just testing',
+        parse_mode=telegram.ParseMode.MARKDOWN_V2,
+    )

@@ -1,5 +1,9 @@
 from prettyconf import config
 
+SEARCH_TERMS = config('SEARCH_TERMS', cast=config.list)
+TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHANNEL_ID = config('TELEGRAM_CHANNEL_ID')
+
 RTVE_SCHED_URL = config(
     'RTVE_SCHED_URL',
     default='https://www.rtve.es/'
@@ -7,7 +11,6 @@ RTVE_SCHED_URL = config(
     '{channel}_{date}.html',
 )
 
-SEARCH_TERMS = config('SEARCH_TERMS', cast=config.list)
 RATING_TERMS = config(
     'RATING_TERMS',
     default='NO RECOMENDADO, SIN CALIFICAR, PARA TODOS LOS PÚBLICOS',

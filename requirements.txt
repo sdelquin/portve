@@ -1,3 +1,4 @@
 requirements
 html2text
 prettyconf
+python-telegram-bot
