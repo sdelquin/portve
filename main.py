@@ -1,4 +1,4 @@
 from portve.core import TVGuide
 
-guide = TVGuide()
-guide.notify()
+if guide := TVGuide():
+    guide.notify()

@@ -69,6 +69,9 @@ class TVGuide:
             disable_web_page_preview=True,
         )
 
+    def __bool__(self):
+        return len(self.guide.keys()) > 0
+
     def __str__(self):
         buffer = []
         for channel, schedule in self.guide.items():
