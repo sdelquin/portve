@@ -29,7 +29,7 @@ class Schedule:
             if services.is_rating(line):
                 add_details = False
                 continue
-            if add_details and not services.is_blank(line):
+            if add_details and line != '':
                 schedule[heading].append(line)
 
         return schedule
@@ -40,13 +40,12 @@ class Schedule:
     def __str__(self):
         buffer = []
         for heading, details in self.schedule.items():
-            fancy_heading = services.fix_time(heading).title()
-            buffer.append(f'• {fancy_heading}')
+            buffer.append(f'• {services.prepare_output(heading)}')
             if details:
                 buffer.append(
                     '\n'.join(
                         [
-                            f'\t\t\t\t_{services.fix_time(detail).title()}_'
+                            f'\t\t\t\t_{services.prepare_output(detail)}_'
                             for detail in details
                         ]
                     )

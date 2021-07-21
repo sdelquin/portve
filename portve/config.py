@@ -23,3 +23,24 @@ RTVE_SCHED_ROOT_URL = config(
 )
 
 TIME_CORRECTION = config('TIME_CORRECTION', default=0, cast=int)
+
+TELEGRAM_ESCAPING_MAP = {
+    '_': r'\_',
+    '*': r'\*',
+    '[': r'\[',
+    ']': r'\]',
+    '(': r'\(',
+    ')': r'\)',
+    '~': r'\~',
+    '`': r'\`',
+    '>': r'\>',
+    '#': r'\#',
+    '+': r'\+',
+    '-': r'\-',
+    '=': r'\=',
+    '|': r'\|',
+    '{': r'\{',
+    '}': r'\}',
+    '.': r'\.',
+    '!': r'\!',
+}
