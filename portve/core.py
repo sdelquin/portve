@@ -80,8 +80,7 @@ class TVGuide:
         buffer.append(f'⚡ __Programación {self.date.strftime("%d/%m/%Y")}__\n')
         for channel, schedule in self.guide.items():
             buffer.append(f'📺 *{channel}*')
-            buffer.append(str(schedule))
-            buffer.append('\n')
+            buffer.append(str(schedule) + '\n')
         buffer.append(f'_ — Timezone: {services.escape_telegram_chars(config.TARGET_TZ)}_')
         buffer.append(f'_ — Fuente: [RTVE]({config.RTVE_SCHED_ROOT_URL})_')
         return '\n'.join(buffer).strip()
