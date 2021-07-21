@@ -40,10 +40,16 @@ class Schedule:
     def __str__(self):
         buffer = []
         for heading, details in self.schedule.items():
-            buffer.append(f'• {heading.title()}')
+            fancy_heading = services.fix_time(heading).title()
+            buffer.append(f'• {fancy_heading}')
             if details:
                 buffer.append(
-                    '\n'.join([f'\t\t\t\t_{detail.title()}_' for detail in details])
+                    '\n'.join(
+                        [
+                            f'\t\t\t\t_{services.fix_time(detail).title()}_'
+                            for detail in details
+                        ]
+                    )
                 )
         return '\n'.join(buffer)
 
@@ -61,6 +67,7 @@ class TVGuide:
             chat_id=config.TELEGRAM_CHANNEL_ID,
             text=str(self),
             parse_mode=telegram.ParseMode.MARKDOWN_V2,
+            disable_web_page_preview=True,
         )
 
     def __str__(self):
@@ -69,4 +76,9 @@ class TVGuide:
             buffer.append(f'📺 *{channel}*')
             buffer.append(str(schedule))
             buffer.append('\n')
+        if config.TIME_CORRECTION != 0:
+            buffer.append(
+                f'Aplicada corrección de `{config.TIME_CORRECTION}h` con '
+                f'respecto a [la programación de RTVE]({config.RTVE_SCHED_ROOT_URL})'
+            )
         return '\n'.join(buffer).strip()

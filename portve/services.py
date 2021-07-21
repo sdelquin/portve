@@ -16,3 +16,11 @@ def is_rating(line: str, rating_terms: list = config.RATING_TERMS):
 
 def is_blank(line: str):
     return line == ''
+
+
+def fix_time(line: str):
+    for m in re.finditer(r'(\d\d?)[\.:](\d\d?)', line):
+        hour, minutes = m.groups()
+        fixed_hour = (int(hour) + config.TIME_CORRECTION) % 24
+        line = line[: m.start()] + f'{fixed_hour:0{len(hour)}d}:{minutes}' + line[m.end() :]
+    return line
