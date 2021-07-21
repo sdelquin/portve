@@ -8,7 +8,7 @@ from portve import config, services
 
 
 class Schedule:
-    def __init__(self, channel: str, date: datetime.date = datetime.date.today()):
+    def __init__(self, channel: str, date=datetime.date.today()):
         self.url = config.RTVE_SCHED_URL.format(
             channel=channel, date=date.strftime('%d%m%Y')
         )
@@ -54,10 +54,13 @@ class Schedule:
 
 
 class TVGuide:
-    def __init__(self, channels: list[str] = config.CHANNELS):
+    def __init__(self, channels: list[str] = config.CHANNELS, date: datetime.date = None):
+        self.date = (
+            datetime.date.today() + datetime.timedelta(days=1) if date is None else date
+        )
         self.guide = {}
         for channel in channels:
-            if schedule := Schedule(channel):
+            if schedule := Schedule(channel=channel, date=self.date):
                 self.guide[channel] = schedule
 
     def notify(self):
@@ -74,6 +77,7 @@ class TVGuide:
 
     def __str__(self):
         buffer = []
+        buffer.append(f'⚡ __Programación {self.date.strftime("%d/%m/%Y")}__\n')
         for channel, schedule in self.guide.items():
             buffer.append(f'📺 *{channel}*')
             buffer.append(str(schedule))
