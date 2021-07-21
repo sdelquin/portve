@@ -1,4 +1,4 @@
-requirements
+requests
 html2text
 prettyconf
 python-telegram-bot
