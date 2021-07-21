@@ -13,7 +13,7 @@ RTVE_SCHED_URL = config(
 
 RATING_TERMS = config(
     'RATING_TERMS',
-    default='NO RECOMENDADO, SIN CALIFICAR, PARA TODOS LOS PÚBLICOS',
+    default='NO RECOMENDADO, SIN CALIFICAR, PARA TODOS LOS PUBLICOS',
     cast=config.list,
 )
 CHANNELS = config('CHANNELS', default='LA1, LA2, TELEDEPORTE', cast=config.list)
