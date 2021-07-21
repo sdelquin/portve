@@ -44,3 +44,5 @@ TELEGRAM_ESCAPING_MAP = {
     '.': r'\.',
     '!': r'\!',
 }
+
+KEEP_IN_UPPERCASE = config('KEEP_IN_UPPERCASE', default='', cast=config.list)

@@ -27,5 +27,13 @@ def escape_telegram_chars(text):
     return text.translate(str.maketrans(config.TELEGRAM_ESCAPING_MAP))
 
 
+def format_case(text):
+    text = text.title()
+    uppercase_map = {k.title(): k for k in config.KEEP_IN_UPPERCASE}
+    for word, replacement in uppercase_map.items():
+        text = text.replace(word, replacement)
+    return text
+
+
 def prepare_output(text):
-    return escape_telegram_chars(fix_time(text)).title()
+    return format_case(escape_telegram_chars(fix_time(text)))
