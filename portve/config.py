@@ -7,7 +7,7 @@ RATING_TERMS = config(
 )
 SEARCH_TERMS = config('SEARCH_TERMS', cast=config.list)
 
-CHANNELS = config('CHANNELS', default='LA1, LA2, TELEDEPORTE', cast=config.list)
+CHANNELS = config('CHANNELS', default='LA1, LA2, TELEDEPORTE, 24H, CLAN', cast=config.list)
 
 TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHANNEL_ID = config('TELEGRAM_CHANNEL_ID')
