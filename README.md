@@ -32,6 +32,6 @@ Launch the tool with:
 $ python main.py
 ```
 
-### Time correction
+### Timezone
 
-Time used by RTVE is Spanish Mainland Time. You can correct this time using an integer value (offset) in the `TIME_CORRECTION` setting within the `.env` file.
+The target timezone can be managed with the setting `TARGET_TZ` in `.env` file in format `UTC±<H>`. Default is `UTC`.

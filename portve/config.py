@@ -22,7 +22,8 @@ RTVE_SCHED_ROOT_URL = config(
     'RTVE_SCHED_ROOT_URL', default='https://www.rtve.es/television/programacion/'
 )
 
-TIME_CORRECTION = config('TIME_CORRECTION', default=0, cast=int)
+RTVE_TZ = config('RTVE_TZ', default='UTC+2')
+TARGET_TZ = config('TARGET_TZ', default='UTC')
 
 TELEGRAM_ESCAPING_MAP = {
     '_': r'\_',

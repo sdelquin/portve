@@ -82,9 +82,5 @@ class TVGuide:
             buffer.append(f'📺 *{channel}*')
             buffer.append(str(schedule))
             buffer.append('\n')
-        if config.TIME_CORRECTION != 0:
-            buffer.append(
-                f'Aplicada corrección de `{config.TIME_CORRECTION}h` con '
-                f'respecto a [la programación de RTVE]({config.RTVE_SCHED_ROOT_URL})'
-            )
+        buffer.append(f'_ — Timezone: {services.escape_telegram_chars(config.TARGET_TZ)}_')
         return '\n'.join(buffer).strip()
