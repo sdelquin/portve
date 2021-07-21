@@ -83,4 +83,5 @@ class TVGuide:
             buffer.append(str(schedule))
             buffer.append('\n')
         buffer.append(f'_ — Timezone: {services.escape_telegram_chars(config.TARGET_TZ)}_')
+        buffer.append(f'_ — Fuente: [RTVE]({config.RTVE_SCHED_ROOT_URL})_')
         return '\n'.join(buffer).strip()
