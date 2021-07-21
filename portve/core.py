@@ -40,9 +40,11 @@ class Schedule:
     def __str__(self):
         buffer = []
         for heading, details in self.schedule.items():
-            buffer.append(f'• {heading}')
+            buffer.append(f'• {heading.title()}')
             if details:
-                buffer.append('\n'.join([f'\t\t\t\t_{detail}_' for detail in details]))
+                buffer.append(
+                    '\n'.join([f'\t\t\t\t_{detail.title()}_' for detail in details])
+                )
         return '\n'.join(buffer)
 
 
