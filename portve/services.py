@@ -1,6 +1,6 @@
 import re
 
-import config
+from portve import config
 
 
 def match_search_term(line: str, search_terms: list = config.SEARCH_TERMS):

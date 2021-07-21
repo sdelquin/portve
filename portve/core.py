@@ -4,8 +4,7 @@ import html2text
 import requests
 import telegram
 
-import config
-import services
+from portve import config, services
 
 
 class Schedule:

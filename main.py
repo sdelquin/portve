@@ -1,4 +1,4 @@
-import portve
+from portve.core import TVGuide
 
-guide = portve.TVGuide()
+guide = TVGuide()
 guide.notify()
