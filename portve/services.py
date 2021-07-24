@@ -1,6 +1,28 @@
 import re
 
+import logzero
+
 from portve import config
+
+
+def init_logger():
+    console_logformat = (
+        '%(color)s%(levelname)-8s %(asctime)s %(module)s:%(lineno)d%(end_color)s> '
+        '%(message)s'
+    )
+    # remove colors on logfile
+    file_logformat = re.sub(r'%\((end_)?color\)s', '', console_logformat)
+
+    console_formatter = logzero.LogFormatter(fmt=console_logformat)
+    file_formatter = logzero.LogFormatter(fmt=file_logformat)
+    logzero.setup_default_logger(formatter=console_formatter)
+    logzero.logfile(
+        config.LOGFILE,
+        maxBytes=config.LOGFILE_SIZE,
+        backupCount=config.LOGFILE_BACKUP_COUNT,
+        formatter=file_formatter,
+    )
+    return logzero.logger
 
 
 def get_timezone_offset(value):

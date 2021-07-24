@@ -3,3 +3,4 @@ __pycache__
 *.pyc
 .artwork
 .DS_Store
+*.log

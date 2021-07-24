@@ -1,4 +1,8 @@
+from pathlib import Path
+
 from prettyconf import config
+
+PROJECT_DIR = Path(__file__).absolute().parent.parent
 
 RATING_TERMS = config(
     'RATING_TERMS',
@@ -47,3 +51,7 @@ TELEGRAM_ESCAPING_MAP = {
 }
 
 KEEP_IN_UPPERCASE = config('KEEP_IN_UPPERCASE', default='', cast=config.list)
+
+LOGFILE = config('LOGFILE', default=PROJECT_DIR / (PROJECT_DIR.name + '.log'))
+LOGFILE_SIZE = config('LOGFILE_SIZE', cast=float, default=1e6)
+LOGFILE_BACKUP_COUNT = config('LOGFILE_BACKUP_COUNT', cast=int, default=3)

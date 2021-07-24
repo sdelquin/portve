@@ -6,9 +6,12 @@ import telegram
 
 from portve import config, services
 
+logger = services.init_logger()
+
 
 class Schedule:
     def __init__(self, channel: str, date=datetime.date.today()):
+        logger.debug(f'Building schedule for {channel} at {date}')
         self.url = config.RTVE_SCHED_URL.format(
             channel=channel, date=date.strftime('%d%m%Y')
         )
@@ -55,6 +58,7 @@ class Schedule:
 
 class TVGuide:
     def __init__(self, channels: list[str] = config.CHANNELS, date: datetime.date = None):
+        logger.debug('Building TVGuide object')
         self.date = (
             datetime.date.today() + datetime.timedelta(days=1) if date is None else date
         )
@@ -62,8 +66,10 @@ class TVGuide:
         for channel in channels:
             if schedule := Schedule(channel=channel, date=self.date):
                 self.guide[channel] = schedule
+        logger.debug(self)
 
     def notify(self):
+        logger.info('Notifying guide to Telegram channel')
         bot = telegram.Bot(token=config.TELEGRAM_BOT_TOKEN)
         bot.send_message(
             chat_id=config.TELEGRAM_CHANNEL_ID,
