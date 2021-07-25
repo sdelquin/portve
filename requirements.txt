@@ -3,3 +3,4 @@ html2text
 prettyconf
 python-telegram-bot
 logzero
+typer

@@ -57,11 +57,13 @@ class Schedule:
 
 
 class TVGuide:
-    def __init__(self, channels: list[str] = config.CHANNELS, date: datetime.date = None):
+    def __init__(
+        self,
+        channels: list[str] = config.CHANNELS,
+        date: datetime.date = datetime.date.today(),
+    ):
         logger.debug('Building TVGuide object')
-        self.date = (
-            datetime.date.today() + datetime.timedelta(days=1) if date is None else date
-        )
+        self.date = date
         self.guide = {}
         for channel in channels:
             if schedule := Schedule(channel=channel, date=self.date):
@@ -87,6 +89,8 @@ class TVGuide:
         for channel, schedule in self.guide.items():
             buffer.append(f'📺 *{channel}*')
             buffer.append(str(schedule) + '\n')
+        else:
+            buffer.append('No hay información disponible\n')
         buffer.append(f'_ — Timezone: {services.escape_telegram_chars(config.TARGET_TZ)}_')
         buffer.append(f'_ — Fuente: [RTVE]({config.RTVE_SCHED_ROOT_URL})_')
         return '\n'.join(buffer).strip()

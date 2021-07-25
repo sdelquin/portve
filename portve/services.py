@@ -1,3 +1,4 @@
+import datetime
 import re
 
 import logzero
@@ -71,3 +72,11 @@ def format_case(text):
 
 def prepare_output(text):
     return format_case(escape_telegram_chars(fix_timezone(text)))
+
+
+def build_ref_date(ref_date: str):
+    if ref_date == 'today':
+        return datetime.date.today()
+    if ref_date == 'tomorrow':
+        return datetime.date.today() + datetime.timedelta(days=1)
+    return datetime.date.today()
