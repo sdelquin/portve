@@ -8,8 +8,14 @@ from portve import config
 
 def init_logger():
     console_logformat = (
-        '%(color)s%(levelname)-8s %(asctime)s %(module)s:%(lineno)d%(end_color)s> '
-        '%(message)s'
+        '%(asctime)s '
+        '%(color)s'
+        '[%(levelname)-8s] '
+        '%(end_color)s '
+        '%(message)s '
+        '%(color)s'
+        '(%(filename)s:%(lineno)d)'
+        '%(end_color)s'
     )
     # remove colors on logfile
     file_logformat = re.sub(r'%\((end_)?color\)s', '', console_logformat)

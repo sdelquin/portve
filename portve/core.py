@@ -4,15 +4,14 @@ import html2text
 import redis
 import requests
 import telegram
+from logzero import logger
 
 from portve import config, services
-
-logger = services.init_logger()
 
 
 class Schedule:
     def __init__(self, channel: str, date=datetime.date.today()):
-        logger.debug(f'Building schedule for {channel} at {date}')
+        logger.info(f'Building schedule for {channel} at {date}')
         self.url = config.RTVE_SCHED_URL.format(
             channel=channel, date=date.strftime('%d%m%Y')
         )
