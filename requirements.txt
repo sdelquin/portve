@@ -4,3 +4,4 @@ prettyconf
 python-telegram-bot
 logzero
 typer
+redis

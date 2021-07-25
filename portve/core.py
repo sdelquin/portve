@@ -1,6 +1,7 @@
 import datetime
 
 import html2text
+import redis
 import requests
 import telegram
 
@@ -63,22 +64,42 @@ class TVGuide:
         date: datetime.date = datetime.date.today(),
     ):
         logger.debug('Building TVGuide object')
+        self.redis = redis.Redis(db=config.REDIS_DB)
         self.date = date
+        self.tg_bot = telegram.Bot(token=config.TELEGRAM_BOT_TOKEN)
         self.guide = {}
         for channel in channels:
             if schedule := Schedule(channel=channel, date=self.date):
                 self.guide[channel] = schedule
         logger.debug(self)
 
-    def notify(self):
-        logger.info('Notifying guide to Telegram channel')
-        bot = telegram.Bot(token=config.TELEGRAM_BOT_TOKEN)
-        bot.send_message(
+    def send_guide(self):
+        return self.tg_bot.send_message(
             chat_id=config.TELEGRAM_CHANNEL_ID,
             text=str(self),
             parse_mode=telegram.ParseMode.MARKDOWN_V2,
             disable_web_page_preview=True,
         )
+
+    def edit_guide(self, msg_id: str):
+        return self.tg_bot.edit_message_text(
+            chat_id=config.TELEGRAM_CHANNEL_ID,
+            message_id=msg_id,
+            text=str(self),
+            parse_mode=telegram.ParseMode.MARKDOWN_V2,
+            disable_web_page_preview=True,
+        )
+
+    def notify(self):
+        logger.info('Notifying guide to Telegram channel')
+        try:
+            if msg_id := self.redis.get(self.date.isoformat()):
+                self.edit_guide(msg_id.decode('utf-8'))
+            else:
+                msg = self.send_guide()
+                self.redis.set(self.date.isoformat(), msg.message_id)
+        except telegram.error.BadRequest as err:
+            logger.error(err)
 
     def __bool__(self):
         return len(self.guide.keys()) > 0
