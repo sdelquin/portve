@@ -2,6 +2,7 @@ import datetime
 import re
 
 import logzero
+import pytz
 
 from portve import config
 
@@ -33,6 +34,7 @@ def init_logger():
 
 
 def get_timezone_offset(value):
+    '''value in format UTC+<offset>'''
     value = value.strip().upper()
     if m := re.match(r'UTC(?:\s*([+-]?\s*\d+))?', value):
         offset = m.groups()[0]
@@ -44,6 +46,23 @@ def get_timezone_offset(value):
 DELTA_TZ = get_timezone_offset(config.TARGET_TZ) - get_timezone_offset(config.RTVE_TZ)
 
 
+def fix_timezone(line: str, delta_tz=DELTA_TZ):
+    for m in re.finditer(r'(\d\d?)[\.:](\d\d?)', line):
+        hour, minutes = m.groups()
+        fixed_hour = (int(hour) + delta_tz) % 24
+        line = line[: m.start()] + f'{fixed_hour:0{len(hour)}d}:{minutes}' + line[m.end() :]
+    return line
+
+
+def tzonify_datetime(moment: datetime.datetime, tz: str):
+    '''Convert moment to timezone tz.
+       - moment is a naive datetime
+       - tz in format UTC+<offset>
+    '''
+    utc_offset = get_timezone_offset(tz)
+    return moment.astimezone(pytz.utc) + datetime.timedelta(minutes=utc_offset * 60)
+
+
 def match_search_term(text: str, search_terms: list = config.SEARCH_TERMS):
     if s := re.search(r'\*\*(.*)\*\*', text):
         text = s.groups()[0].strip()
@@ -53,14 +72,6 @@ def match_search_term(text: str, search_terms: list = config.SEARCH_TERMS):
 
 def is_rating(text: str, rating_terms: list = config.RATING_TERMS):
     return any(term in text for term in rating_terms)
-
-
-def fix_timezone(line: str, delta_tz=DELTA_TZ):
-    for m in re.finditer(r'(\d\d?)[\.:](\d\d?)', line):
-        hour, minutes = m.groups()
-        fixed_hour = (int(hour) + delta_tz) % 24
-        line = line[: m.start()] + f'{fixed_hour:0{len(hour)}d}:{minutes}' + line[m.end() :]
-    return line
 
 
 def escape_telegram_chars(text):
