@@ -1,10 +1,8 @@
-import datetime
 import re
 
 import logzero
-import pytz
 
-from portve import settings
+from portve import moment, settings
 
 
 def init_logger():
@@ -33,36 +31,6 @@ def init_logger():
     return logzero.logger
 
 
-def get_timezone_offset(value):
-    '''value in format UTC+<offset>'''
-    value = value.strip().upper()
-    if m := re.match(r'UTC(?:\s*([+-]?\s*\d+))?', value):
-        offset = m.groups()[0]
-        if offset is not None:
-            return eval(offset)
-    return 0
-
-
-DELTA_TZ = get_timezone_offset(settings.TARGET_TZ) - get_timezone_offset(settings.RTVE_TZ)
-
-
-def fix_timezone(line: str, delta_tz=DELTA_TZ):
-    for m in re.finditer(r'(\d\d?)[\.:](\d\d?)', line):
-        hour, minutes = m.groups()
-        fixed_hour = (int(hour) + delta_tz) % 24
-        line = line[: m.start()] + f'{fixed_hour:0{len(hour)}d}:{minutes}' + line[m.end() :]
-    return line
-
-
-def tzonify_datetime(moment: datetime.datetime, tz: str):
-    '''Convert moment to timezone tz.
-    - moment is a naive datetime
-    - tz in format UTC+<offset>
-    '''
-    utc_offset = get_timezone_offset(tz)
-    return moment.astimezone(pytz.utc) + datetime.timedelta(minutes=utc_offset * 60)
-
-
 def match_search_term(text: str, search_terms: list = settings.SEARCH_TERMS):
     if s := re.search(r'\*\*(.*)\*\*', text):
         text = s.groups()[0].strip()
@@ -88,12 +56,8 @@ def format_case(text):
 
 
 def prepare_output(text):
-    return format_case(escape_telegram_chars(fix_timezone(text)))
-
-
-def build_ref_date(ref_date: str):
-    if ref_date == 'today':
-        return datetime.date.today()
-    if ref_date == 'tomorrow':
-        return datetime.date.today() + datetime.timedelta(days=1)
-    return datetime.date.today()
+    return format_case(
+        escape_telegram_chars(
+            moment.fix_timezone(text, settings.RTVE_TZ, settings.TARGET_TZ)
+        )
+    )

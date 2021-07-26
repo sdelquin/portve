@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytz
 from prettyconf import config
 
 PROJECT_DIR = Path(__file__).absolute().parent.parent
@@ -26,8 +27,9 @@ RTVE_SCHED_ROOT_URL = config(
     'RTVE_SCHED_ROOT_URL', default='https://www.rtve.es/television/programacion/'
 )
 
-RTVE_TZ = config('RTVE_TZ', default='UTC+2')
-TARGET_TZ = config('TARGET_TZ', default='UTC')
+# https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+RTVE_TZ = config('RTVE_TZ', default='Europe/Madrid', cast=lambda tz: pytz.timezone(tz))
+TARGET_TZ = config('TARGET_TZ', default='UTC', cast=lambda tz: pytz.timezone(tz))
 
 TELEGRAM_ESCAPING_MAP = {
     '_': r'\_',

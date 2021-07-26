@@ -104,9 +104,7 @@ class TVGuide:
         return len(self.guide.keys()) > 0
 
     def __str__(self):
-        now = services.tzonify_datetime(
-            datetime.datetime.now(), settings.TARGET_TZ
-        ).strftime('%d/%m/%Y @ %H:%Mh')
+        now = datetime.datetime.now(tz=settings.TARGET_TZ).strftime('%d/%m/%Y @ %H:%Mh')
         buffer = []
         buffer.append(f'⚡ __Programación {self.date.strftime("%d/%m/%Y")}__\n')
         for channel, schedule in self.guide.items():
@@ -115,7 +113,7 @@ class TVGuide:
         else:
             buffer.append('No hay información disponible\n')
         buffer.append(
-            f'_ — Timezone: {services.escape_telegram_chars(settings.TARGET_TZ)}_'
+            f'_ — Timezone: {services.escape_telegram_chars(settings.TARGET_TZ.zone)}_'
         )
         buffer.append(f'_ — Fuente: [RTVE]({settings.RTVE_SCHED_ROOT_URL})_')
         buffer.append(f'_ — Última actualización: {services.escape_telegram_chars(now)}_')

@@ -34,4 +34,4 @@ $ python main.py
 
 ### Timezone
 
-The target timezone can be managed with the setting `TARGET_TZ` in `.env` file in format `UTC±<H>`. Default is `UTC`.
+The target timezone can be managed with the setting `TARGET_TZ` in `.env` file [using this format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). Default is `UTC`.
