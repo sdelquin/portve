@@ -107,9 +107,10 @@ class TVGuide:
         now = datetime.datetime.now(tz=settings.TARGET_TZ).strftime('%d/%m/%Y @ %H:%Mh')
         buffer = []
         buffer.append(f'⚡ __Programación {self.date.strftime("%d/%m/%Y")}__\n')
-        for channel, schedule in self.guide.items():
-            buffer.append(f'📺 *{channel}*')
-            buffer.append(str(schedule) + '\n')
+        if self:
+            for channel, schedule in self.guide.items():
+                buffer.append(f'📺 *{channel}*')
+                buffer.append(str(schedule) + '\n')
         else:
             buffer.append('No hay información disponible\n')
         buffer.append(
