@@ -11,16 +11,15 @@ logger = services.init_logger()
 
 
 @app.command()
-def notify(ref_date: str = typer.Option('today', '--ref_date', help='today or tomorrow')):
+def notify(
+    verbose: bool = typer.Option(False, '--verbose', '-vv', show_default=False),
+    ref_date: str = typer.Option('today', '--ref_date', help='today or tomorrow'),
+):
     '''Notify TVGuide to Telegram Channel based on indicated search terms'''
+    logger.setLevel(logzero.DEBUG if verbose else logzero.INFO)
     ref_date = moment.build_ref_date(ref_date)
     guide = TVGuide(date=ref_date)
     guide.notify()
-
-
-@app.callback()
-def main(verbose: bool = False):
-    logger.setLevel(logzero.DEBUG if verbose else logzero.INFO)
 
 
 if __name__ == "__main__":
