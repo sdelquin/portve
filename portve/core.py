@@ -6,13 +6,13 @@ import requests
 import telegram
 from logzero import logger
 
-from portve import config, services
+from portve import services, settings
 
 
 class Schedule:
     def __init__(self, channel: str, date=datetime.date.today()):
         logger.info(f'Building schedule for {channel} at {date}')
-        self.url = config.RTVE_SCHED_URL.format(
+        self.url = settings.RTVE_SCHED_URL.format(
             channel=channel, date=date.strftime('%d%m%Y')
         )
         response = requests.get(self.url)
@@ -59,13 +59,13 @@ class Schedule:
 class TVGuide:
     def __init__(
         self,
-        channels: list[str] = config.CHANNELS,
+        channels: list[str] = settings.CHANNELS,
         date: datetime.date = datetime.date.today(),
     ):
         logger.debug('Building TVGuide object')
-        self.redis = redis.Redis(db=config.REDIS_DB)
+        self.redis = redis.Redis(db=settings.REDIS_DB)
         self.date = date
-        self.tg_bot = telegram.Bot(token=config.TELEGRAM_BOT_TOKEN)
+        self.tg_bot = telegram.Bot(token=settings.TELEGRAM_BOT_TOKEN)
         self.guide = {}
         for channel in channels:
             if schedule := Schedule(channel=channel, date=self.date):
@@ -74,7 +74,7 @@ class TVGuide:
 
     def send_guide(self):
         return self.tg_bot.send_message(
-            chat_id=config.TELEGRAM_CHANNEL_ID,
+            chat_id=settings.TELEGRAM_CHANNEL_ID,
             text=str(self),
             parse_mode=telegram.ParseMode.MARKDOWN_V2,
             disable_web_page_preview=True,
@@ -82,7 +82,7 @@ class TVGuide:
 
     def edit_guide(self, msg_id: str):
         return self.tg_bot.edit_message_text(
-            chat_id=config.TELEGRAM_CHANNEL_ID,
+            chat_id=settings.TELEGRAM_CHANNEL_ID,
             message_id=msg_id,
             text=str(self),
             parse_mode=telegram.ParseMode.MARKDOWN_V2,
@@ -104,9 +104,9 @@ class TVGuide:
         return len(self.guide.keys()) > 0
 
     def __str__(self):
-        now = services.tzonify_datetime(datetime.datetime.now(), config.TARGET_TZ).strftime(
-            '%d/%m/%Y @ %H:%Mh'
-        )
+        now = services.tzonify_datetime(
+            datetime.datetime.now(), settings.TARGET_TZ
+        ).strftime('%d/%m/%Y @ %H:%Mh')
         buffer = []
         buffer.append(f'⚡ __Programación {self.date.strftime("%d/%m/%Y")}__\n')
         for channel, schedule in self.guide.items():
@@ -114,7 +114,9 @@ class TVGuide:
             buffer.append(str(schedule) + '\n')
         else:
             buffer.append('No hay información disponible\n')
-        buffer.append(f'_ — Timezone: {services.escape_telegram_chars(config.TARGET_TZ)}_')
-        buffer.append(f'_ — Fuente: [RTVE]({config.RTVE_SCHED_ROOT_URL})_')
+        buffer.append(
+            f'_ — Timezone: {services.escape_telegram_chars(settings.TARGET_TZ)}_'
+        )
+        buffer.append(f'_ — Fuente: [RTVE]({settings.RTVE_SCHED_ROOT_URL})_')
         buffer.append(f'_ — Última actualización: {services.escape_telegram_chars(now)}_')
         return '\n'.join(buffer).strip()

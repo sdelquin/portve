@@ -4,7 +4,7 @@ import re
 import logzero
 import pytz
 
-from portve import config
+from portve import settings
 
 
 def init_logger():
@@ -25,9 +25,9 @@ def init_logger():
     file_formatter = logzero.LogFormatter(fmt=file_logformat)
     logzero.setup_default_logger(formatter=console_formatter)
     logzero.logfile(
-        config.LOGFILE,
-        maxBytes=config.LOGFILE_SIZE,
-        backupCount=config.LOGFILE_BACKUP_COUNT,
+        settings.LOGFILE,
+        maxBytes=settings.LOGFILE_SIZE,
+        backupCount=settings.LOGFILE_BACKUP_COUNT,
         formatter=file_formatter,
     )
     return logzero.logger
@@ -43,7 +43,7 @@ def get_timezone_offset(value):
     return 0
 
 
-DELTA_TZ = get_timezone_offset(config.TARGET_TZ) - get_timezone_offset(config.RTVE_TZ)
+DELTA_TZ = get_timezone_offset(settings.TARGET_TZ) - get_timezone_offset(settings.RTVE_TZ)
 
 
 def fix_timezone(line: str, delta_tz=DELTA_TZ):
@@ -56,32 +56,32 @@ def fix_timezone(line: str, delta_tz=DELTA_TZ):
 
 def tzonify_datetime(moment: datetime.datetime, tz: str):
     '''Convert moment to timezone tz.
-       - moment is a naive datetime
-       - tz in format UTC+<offset>
+    - moment is a naive datetime
+    - tz in format UTC+<offset>
     '''
     utc_offset = get_timezone_offset(tz)
     return moment.astimezone(pytz.utc) + datetime.timedelta(minutes=utc_offset * 60)
 
 
-def match_search_term(text: str, search_terms: list = config.SEARCH_TERMS):
+def match_search_term(text: str, search_terms: list = settings.SEARCH_TERMS):
     if s := re.search(r'\*\*(.*)\*\*', text):
         text = s.groups()[0].strip()
         if any(term in text for term in search_terms):
             return text
 
 
-def is_rating(text: str, rating_terms: list = config.RATING_TERMS):
+def is_rating(text: str, rating_terms: list = settings.RATING_TERMS):
     return any(term in text for term in rating_terms)
 
 
 def escape_telegram_chars(text):
     # https://core.telegram.org/bots/api#formatting-options
-    return text.translate(str.maketrans(config.TELEGRAM_ESCAPING_MAP))
+    return text.translate(str.maketrans(settings.TELEGRAM_ESCAPING_MAP))
 
 
 def format_case(text):
     text = text.title()
-    uppercase_map = {k.title(): k for k in config.KEEP_IN_UPPERCASE}
+    uppercase_map = {k.title(): k for k in settings.KEEP_IN_UPPERCASE}
     for word, replacement in uppercase_map.items():
         text = text.replace(word, replacement)
     return text
