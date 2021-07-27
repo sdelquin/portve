@@ -15,6 +15,7 @@ class Schedule:
         self.url = settings.RTVE_SCHED_URL.format(
             channel=channel, date=date.strftime('%d%m%Y')
         )
+        logger.debug(self.url)
         response = requests.get(self.url)
         self.page = html2text.html2text(response.text)
         self.schedule = self._get_schedule()
