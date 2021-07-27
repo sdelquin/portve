@@ -17,6 +17,7 @@ class Schedule:
         )
         logger.debug(self.url)
         response = requests.get(self.url)
+        logger.debug(f'Status Code: {response.status_code}')
         self.page = html2text.html2text(response.text)
         self.schedule = self._get_schedule()
 
