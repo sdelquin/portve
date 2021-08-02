@@ -3,7 +3,7 @@
 import logzero
 import typer
 
-from portve import moment, services, settings
+from portve import services
 from portve.core import TVGuide
 
 app = typer.Typer(add_completion=False)
@@ -17,8 +17,7 @@ def notify(
 ):
     '''Notify TVGuide to Telegram Channel based on indicated search terms'''
     logger.setLevel(logzero.DEBUG if verbose else logzero.INFO)
-    ref_date = moment.build_ref_date(ref_date, tz=settings.TARGET_TZ)
-    guide = TVGuide(date=ref_date)
+    guide = TVGuide(ref_date=ref_date)
     guide.notify()
 
 

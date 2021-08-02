@@ -17,7 +17,7 @@ def fix_timezone(line: str, source_tz: pytz.timezone, target_tz: pytz.timezone):
     return line
 
 
-def build_ref_date(ref_date: str, tz: pytz.timezone):
+def build_date_from_ref(ref_date: str, tz: pytz.timezone):
     today = datetime.datetime.now(tz=tz).date()
     if ref_date == 'today':
         return today

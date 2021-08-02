@@ -12,16 +12,21 @@ RATING_TERMS = config(
 )
 SEARCH_TERMS = config('SEARCH_TERMS', cast=config.list)
 
-CHANNELS = config('CHANNELS', default='LA1, LA2, TELEDEPORTE, 24H, CLAN', cast=config.list)
+CHANNELS = {
+    'LA1': 'tv1',
+    'LA2': 'la2',
+    'TELEDEPORTE': 'dep',
+    'Canal 24H': '24h',
+    'CLAN': 'clan',
+}
+
+REF_DATES = {'TODAY': 'hoy', 'TOMORROW': 'mañana'}
 
 TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHANNEL_ID = config('TELEGRAM_CHANNEL_ID')
 
 RTVE_SCHED_URL = config(
-    'RTVE_SCHED_URL',
-    default='https://www.rtve.es/'
-    'contenidos/sala-de-comunicacion/programacion-descargable/'
-    '{channel}_{date}.html',
+    'RTVE_SCHED_URL', default='https://www.rtve.es/play/guia-tve/{channel}/{ref_date}/'
 )
 RTVE_SCHED_ROOT_URL = config(
     'RTVE_SCHED_ROOT_URL', default='https://www.rtve.es/television/programacion/'

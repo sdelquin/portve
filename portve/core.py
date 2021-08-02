@@ -5,19 +5,22 @@ import redis
 import requests
 import telegram
 from logzero import logger
+from user_agent import generate_user_agent
 
-from portve import services, settings
+from portve import moment, services, settings
 
 
 class Schedule:
-    def __init__(self, channel: str, date=datetime.date.today()):
-        logger.info(f'Building schedule for {channel} at {date}')
+    def __init__(self, channel_name: str, channel_slug: str, ref_date: str):
+        logger.info(f'Building schedule of {channel_name} for {ref_date}')
         self.url = settings.RTVE_SCHED_URL.format(
-            channel=channel, date=date.strftime('%d%m%Y')
+            channel=channel_slug, ref_date=settings.REF_DATES.get(ref_date, 'hoy')
         )
         logger.debug(self.url)
-        response = requests.get(self.url)
+        response = requests.get(self.url, headers={'User-Agent': generate_user_agent()})
         logger.debug(f'Status Code: {response.status_code}')
+        if response.status_code != 200:
+            logger.debug(f'Reason: {response.reason}')
         self.page = html2text.html2text(response.text)
         self.schedule = self._get_schedule()
 
@@ -61,17 +64,21 @@ class Schedule:
 class TVGuide:
     def __init__(
         self,
-        channels: list[str] = settings.CHANNELS,
-        date: datetime.date = datetime.date.today(),
+        channels: dict = settings.CHANNELS,
+        ref_date: str = 'today',
     ):
         logger.debug('Building TVGuide object')
         self.redis = redis.Redis(db=settings.REDIS_DB)
-        self.date = date
+        self.date = moment.build_date_from_ref(ref_date, tz=settings.TARGET_TZ)
         self.tg_bot = telegram.Bot(token=settings.TELEGRAM_BOT_TOKEN)
         self.guide = {}
-        for channel in channels:
-            if schedule := Schedule(channel=channel, date=self.date):
-                self.guide[channel] = schedule
+        for channel_name, channel_slug in channels.items():
+            if schedule := Schedule(
+                channel_name=channel_name,
+                channel_slug=channel_slug,
+                ref_date=ref_date.upper(),
+            ):
+                self.guide[channel_name] = schedule
         logger.debug(self)
 
     def send_guide(self):
